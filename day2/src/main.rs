@@ -4,7 +4,7 @@ use divisors_fixed::Divisors;
 use std::fs;
 
 fn check_pattern(pattern: &str, id: &str, id_len: usize, pattern_len: usize) -> bool {
-    let mut res = false;
+    let mut res: bool = false;
     for i in 1..(id_len / pattern_len) {
         if id[i * pattern_len..(i + 1) * pattern_len] != *pattern {
             res = true;
@@ -15,8 +15,8 @@ fn check_pattern(pattern: &str, id: &str, id_len: usize, pattern_len: usize) -> 
 }
 
 fn is_id_valid(id: &str) -> bool {
-    let id_len = id.len();
-    let mut divisors = id_len.divisors();
+    let id_len: usize = id.len();
+    let mut divisors: Vec<usize> = id_len.divisors();
     divisors.pop();
     let mut res: bool = true;
     for div in divisors {
