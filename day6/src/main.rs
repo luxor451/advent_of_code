@@ -48,26 +48,31 @@ fn read_file_two(path: &str) -> Vec<Vec<char>> {
         .filter(|x| *x != "")
         .map(|s| s.chars().collect())
         .collect();
+
+    let mut content = content;
+    for elem in &mut content {
+        elem.push(' ');
+    }
     return content;
 }
 
-fn get_max_lenght_of_number(operande_line: &Vec<char>) -> usize {
-    let mut res = 1;
-    while operande_line[res] == ' ' {
-        res += 1;
-    }
-    return res - 1;
-}
 
-fn func(content: &Vec<Vec<char>>, j: usize, m: usize, n: usize, elem_index: usize) -> u64 {
+fn get_number(content: &Vec<Vec<char>>, j: usize, n :usize) -> u64 {
     let mut current_nb_vec: Vec<char> = Vec::new();
     for i in 0..(n - 1) {
-        current_nb_vec.push(content[i][j + elem_index * m]);
+        current_nb_vec.push(content[i][j]);
     }
+
+    // println!("Current nb vec: {:?}", current_nb_vec);
     let current_nb_vec: Vec<char> = current_nb_vec
         .into_iter()
         .filter(|x| *x != ' ')
         .collect::<Vec<char>>();
+
+    if current_nb_vec == [] {
+        return 0;
+    }
+
     let current_number: u64 = current_nb_vec
         .iter()
         .collect::<String>()
@@ -78,25 +83,48 @@ fn func(content: &Vec<Vec<char>>, j: usize, m: usize, n: usize, elem_index: usiz
 
 fn part_two() {
     let content: Vec<Vec<char>> = read_file_two("inputs.txt");
-    let n: usize = content.len();
-    let max_nb_lenght = get_max_lenght_of_number(&content[n - 1]);
-    let m: usize = content[0].len() / (max_nb_lenght + 1) + 1;
-    let mut res: u64 = 0;
-    for elem_index in 0..m {
-        let mut res_collumn = func(&content, 0, m, n, elem_index);
-        for j in 1..(m - 1) {
-            let current_nb = func(&content, j, m, n, elem_index);
-            if content[n - 1][elem_index * m] == '+' {
-                res_collumn += current_nb;
+    let n = content.len();
+    let m = content[0].len();
+
+    // println!("content: {:?}", content[n - 1]);
+
+    let all_operande = content[n - 1]
+        .iter()
+        .filter(|x| **x != ' ' )
+        .collect::<Vec<&char>>();
+
+    let mut res = 0;
+    let mut current_operande_id = 0;
+
+    let mut vec_of_collumn : Vec<u64> = Vec::with_capacity(4);
+    
+    for j in 0..m {
+        let current_operande = all_operande[current_operande_id];
+        let current_nb = get_number(&content, j, n);
+        println!("{:?}", current_nb);
+        if current_nb == 0 {
+            println!("{:?}", vec_of_collumn);
+            if *current_operande == '+' {
+
+
+                res += vec_of_collumn.iter().sum::<u64>();
             }
-            if content[n - 1][elem_index * m] == '*' {
-                res_collumn *= current_nb;
+            if *current_operande == '*' {
+                res += vec_of_collumn.iter().product::<u64>();
             }
+
+            vec_of_collumn = Vec::with_capacity(4);
+            current_operande_id += 1;
         }
-        res += res_collumn;
+        else {
+            vec_of_collumn.push(current_nb);
+        }
+        
+        
     }
 
     println!("Final res of part two: {:?}", res);
+
 }
 
 fn main() {
@@ -107,7 +135,6 @@ fn main() {
 
     let now = Instant::now();
     part_two();
-
     let elapsed = now.elapsed();
     println!("Part two done in: {:.2?}", elapsed);
 }
