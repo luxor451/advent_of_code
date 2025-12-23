@@ -56,14 +56,12 @@ fn read_file_two(path: &str) -> Vec<Vec<char>> {
     return content;
 }
 
-
-fn get_number(content: &Vec<Vec<char>>, j: usize, n :usize) -> u64 {
+fn get_number(content: &Vec<Vec<char>>, j: usize, n: usize) -> u64 {
     let mut current_nb_vec: Vec<char> = Vec::new();
     for i in 0..(n - 1) {
         current_nb_vec.push(content[i][j]);
     }
 
-    // println!("Current nb vec: {:?}", current_nb_vec);
     let current_nb_vec: Vec<char> = current_nb_vec
         .into_iter()
         .filter(|x| *x != ' ')
@@ -86,18 +84,16 @@ fn part_two() {
     let n = content.len();
     let m = content[0].len();
 
-    // println!("content: {:?}", content[n - 1]);
-
     let all_operande = content[n - 1]
         .iter()
-        .filter(|x| **x != ' ' )
+        .filter(|x| **x != ' ')
         .collect::<Vec<&char>>();
 
     let mut res = 0;
     let mut current_operande_id = 0;
 
-    let mut vec_of_collumn : Vec<u64> = Vec::with_capacity(4);
-    
+    let mut vec_of_collumn: Vec<u64> = Vec::with_capacity(4);
+
     for j in 0..m {
         let current_operande = all_operande[current_operande_id];
         let current_nb = get_number(&content, j, n);
@@ -105,8 +101,6 @@ fn part_two() {
         if current_nb == 0 {
             println!("{:?}", vec_of_collumn);
             if *current_operande == '+' {
-
-
                 res += vec_of_collumn.iter().sum::<u64>();
             }
             if *current_operande == '*' {
@@ -115,16 +109,12 @@ fn part_two() {
 
             vec_of_collumn = Vec::with_capacity(4);
             current_operande_id += 1;
-        }
-        else {
+        } else {
             vec_of_collumn.push(current_nb);
         }
-        
-        
     }
 
     println!("Final res of part two: {:?}", res);
-
 }
 
 fn main() {
